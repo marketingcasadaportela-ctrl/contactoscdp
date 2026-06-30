@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contactos · Casa da Portela</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF; --surface:#FFFFFF; --line:#E5E8EC; --line-2:#EEF1F4;
+    --ink:#1A2026; --muted:#5B6470; --faint:#98A0AB;
+    --accent:#005395; --accent-soft:#E5EFF7; --accent-ink:#013E70;
+    --ini-bg:#EDF2F8; --copied:#005395;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 10px 26px -16px rgba(16,24,40,.22);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg); color:var(--ink); font-family:"Inter",system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.4; padding-bottom:env(safe-area-inset-bottom)}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.88);
+    backdrop-filter:saturate(1.1) blur(12px); -webkit-backdrop-filter:saturate(1.1) blur(12px);
+    border-bottom:1px solid var(--line)}
+  .wrap{max-width:1680px; margin:0 auto; padding:0 32px}
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:15px 0 6px}
+  .brand{display:flex; align-items:center; gap:13px; min-width:0}
+  .logo-svg{height:30px; width:auto; display:block}
+  .brand .div{width:1px; height:26px; background:var(--line)}
+  .brand .sub{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:14px; color:var(--muted); white-space:nowrap}
+  .right{display:flex; align-items:center; gap:14px}
+  .count{font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+  .count b{color:var(--accent); font-weight:600}
+  .update{display:flex; align-items:center; gap:6px; font-size:13px; color:var(--accent-ink);
+    border:1px solid var(--line); background:var(--surface); padding:7px 12px; border-radius:10px; cursor:pointer;
+    font-family:inherit; transition:all .14s}
+  .update:hover{border-color:var(--accent); background:var(--accent-soft)}
+  .update svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.9}
+  .update.busy svg{animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .tabs{display:flex; gap:4px; padding:2px 0 0}
+  .tab{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:14px; color:var(--muted);
+    background:none; border:none; cursor:pointer; padding:9px 14px 12px; position:relative; border-radius:8px 8px 0 0}
+  .tab:hover{color:var(--ink); background:var(--line-2)}
+  .tab.on{color:var(--accent)}
+  .tab.on::after{content:""; position:absolute; left:10px; right:10px; bottom:-1px; height:2.5px; background:var(--accent); border-radius:2px}
+  .tab .b{font-variant-numeric:tabular-nums; opacity:.7; font-weight:500; margin-left:5px; font-size:12.5px}
+
+  .searchrow{padding:14px 0 16px}
+  .search{position:relative; display:flex; align-items:center; max-width:620px}
+  .search svg.ico{position:absolute; left:16px; width:18px; height:18px; stroke:var(--faint); pointer-events:none}
+  #q{width:100%; font-family:inherit; font-size:16px; color:var(--ink); background:var(--surface);
+    border:1px solid var(--line); border-radius:13px; padding:13px 44px; outline:none; transition:border-color .15s, box-shadow .15s}
+  #q::placeholder{color:var(--faint)}
+  #q:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .clearbtn{position:absolute; right:10px; border:none; background:transparent; cursor:pointer; color:var(--faint);
+    width:28px; height:28px; border-radius:8px; display:none; align-items:center; justify-content:center; font-size:18px}
+  .clearbtn:hover{background:var(--line-2); color:var(--muted)}
+  .kbd{position:absolute; right:12px; font-size:11px; color:var(--faint); border:1px solid var(--line);
+    border-radius:6px; padding:2px 6px; background:var(--line-2); font-family:"JetBrains Mono",monospace}
+
+  main{max-width:1680px; margin:0 auto; padding:18px 32px 64px}
+  ul#list{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(310px,1fr)); gap:12px}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:13px 14px; display:flex; flex-direction:column; gap:8px; animation:rise .32s ease both; transition:box-shadow .15s, border-color .15s}
+  .card:hover{border-color:#D7DCE2; box-shadow:0 2px 4px rgba(16,24,40,.05), 0 14px 30px -16px rgba(16,24,40,.26)}
+  @keyframes rise{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+  .head{display:flex; align-items:center; gap:12px; min-width:0}
+  .avatar{flex:0 0 auto; width:52px; height:52px; border-radius:14px; position:relative; overflow:hidden;
+    display:grid; place-items:center; user-select:none; background:var(--ini-bg); border:1px solid var(--line)}
+  .avatar.has-photo{background:#FFFFFF}
+  .avatar .ini{font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:19px; color:var(--accent); letter-spacing:.01em}
+  .avatar img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+  .name{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:16px; letter-spacing:-.01em; line-height:1.15;
+    min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .name mark{background:var(--accent-soft); color:var(--accent-ink); border-radius:3px; padding:0 1px}
+  .line{display:flex; align-items:center; gap:8px; border-top:1px solid var(--line-2); padding-top:7px}
+  .line:first-of-type{border-top:none; padding-top:0}
+  .line a{flex:1 1 auto; min-width:0; color:var(--muted); text-decoration:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:13.5px}
+  .line a:hover{color:var(--accent-ink)}
+  .line .tel{font-family:"JetBrains Mono",monospace; font-size:13px; letter-spacing:-.02em}
+  .cbtn{flex:0 0 auto; border:1px solid var(--line); background:var(--bg); color:var(--muted); width:34px; height:34px;
+    border-radius:9px; cursor:pointer; display:grid; place-items:center; transition:all .14s; position:relative}
+  .cbtn:hover{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+  .cbtn:active{transform:scale(.9)}
+  .cbtn svg{width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.9}
+  .cbtn.done{background:var(--copied); border-color:var(--copied); color:#fff}
+  .cbtn .tip{position:absolute; bottom:calc(100% + 7px); right:0; background:var(--ink); color:#fff; font-size:11px;
+    padding:4px 8px; border-radius:7px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .12s; font-weight:500; z-index:5}
+  .cbtn.done .tip{opacity:1}
+
+  .mailbar{display:flex; align-items:center; flex-wrap:wrap; gap:12px 18px; margin-bottom:18px; color:var(--muted); font-size:13.5px}
+  .mailbar .hint{flex:1 1 260px; min-width:240px}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden}
+  .seg button{border:none; background:var(--surface); color:var(--muted); font-family:inherit; font-size:13px; padding:6px 12px; cursor:pointer}
+  .seg button.on{background:var(--accent); color:#fff}
+  .groups{display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:12px; align-items:start}
+  .grp{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; display:flex; flex-direction:column; gap:13px}
+  .grp.staff{border-color:var(--accent); background:linear-gradient(0deg,var(--accent-soft),var(--surface) 60%)}
+  .grp-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+  .grp-t{font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:17px}
+  .grp-c{font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+  .grp-c b{color:var(--accent); font-weight:600}
+  .grp-row{display:flex; gap:8px}
+  .gbtn{flex:1; display:flex; align-items:center; justify-content:center; gap:7px; border:none; cursor:pointer; background:var(--accent);
+    color:#fff; font-family:inherit; font-weight:600; font-size:14px; padding:11px 12px; border-radius:10px; transition:all .14s}
+  .gbtn:hover{background:var(--accent-ink)} .gbtn:active{transform:scale(.98)} .gbtn.done{background:var(--copied)}
+  .gbtn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.9}
+  .peek{flex:0 0 auto; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; border-radius:10px; padding:0 14px; font-family:inherit; font-size:13px}
+  .peek:hover{border-color:var(--accent); color:var(--accent)}
+  .grp-list{display:none; font-size:12px; color:var(--muted); line-height:1.6; max-height:160px; overflow:auto; background:var(--line-2);
+    border-radius:9px; padding:10px 12px; word-break:break-all; font-family:"JetBrains Mono",monospace}
+  .grp-list.open{display:block}
+
+  .empty{grid-column:1/-1; text-align:center; padding:64px 20px; color:var(--muted)}
+  .empty .big{font-family:"Space Grotesk",sans-serif; font-size:18px; color:var(--ink); margin-bottom:6px}
+  .empty button{margin-top:14px; border:1px solid var(--line); background:var(--surface); color:var(--accent-ink); padding:9px 16px; border-radius:10px; cursor:pointer; font-family:inherit; font-size:14px}
+  .empty button:hover{border-color:var(--accent); background:var(--accent-soft)}
+  .spinner{width:26px; height:26px; border:3px solid var(--line); border-top-color:var(--accent); border-radius:50%; margin:0 auto 16px; animation:spin .8s linear infinite}
+
+  .status{font-size:11.5px; color:var(--faint); text-align:center; margin-top:30px; letter-spacing:.02em}
+  .status .dot{display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent); margin-right:6px; vertical-align:middle}
+  .status .dot.local{background:var(--faint)}
+
+  #toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff;
+    padding:11px 18px; border-radius:12px; font-size:14px; font-weight:500; opacity:0; pointer-events:none; transition:all .25s; z-index:300; box-shadow:var(--shadow)}
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0)} #toast.err{background:#9A3B4F}
+
+  @media (max-width:520px){
+    .wrap,main{padding-left:16px; padding-right:16px}
+    ul#list,.groups{grid-template-columns:1fr; gap:9px}
+    .kbd{display:none} .update span{display:none} .update{padding:7px 9px}
+    .brand .sub,.brand .div{display:none}
+    .tab{padding:9px 10px 12px; font-size:13px}
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><svg class="logo-svg" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 231.62 85.89">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #98989a;
+      }
+
+      .cls-2 {
+        fill: #212721;
+      }
+
+      .cls-3 {
+        fill: #005395;
+      }
+    </style>
+  </defs>
+  <g>
+    <path class="cls-2" d="M113.44,22.75c-1.04-.66-2.99-1.29-5.04-1.29-4.07,0-7.89,2.68-7.89,7.54s3.75,7.57,8.03,7.57c2.19,0,3.89-.42,5.14-1.11l-.38,3.86c-1.29.66-2.88.94-5.39.94-5.63,0-11.81-3.86-11.81-11.33s6.25-11.36,11.81-11.36c2.85,0,5,.63,6.32,1.39l-.8,3.79Z"/>
+    <path class="cls-2" d="M132.76,40.02l-2.12-5.35h-7.85l-2.12,5.35h-4.17l9.07-22.41h2.47l9.1,22.41h-4.38ZM127.55,26.47c-.28-.66-.59-1.56-.8-2.4h-.07c-.21.83-.52,1.74-.8,2.4l-1.84,4.76h5.35l-1.84-4.76Z"/>
+    <path class="cls-2" d="M146.03,40.27c-2.43,0-4.69-.7-5.94-1.49l-.45-4.27c1.7,1.25,4.03,2.08,6.29,2.08s3.58-1.08,3.58-2.74-.97-2.57-3.3-3.27c-4.14-1.22-6.15-3.41-6.15-6.71s2.5-6.29,7.23-6.29c2.33,0,4.31.7,5.14,1.25l-.8,3.58c-.87-.52-2.57-1.22-4.24-1.22-2.02,0-3.13,1.11-3.13,2.43s1.04,2.12,3.06,2.74c4,1.25,6.57,3.23,6.57,7.16s-2.71,6.74-7.85,6.74Z"/>
+    <path class="cls-2" d="M171.99,40.02l-2.12-5.35h-7.85l-2.12,5.35h-4.17l9.07-22.41h2.47l9.1,22.41h-4.38ZM166.78,26.47c-.28-.66-.59-1.56-.8-2.4h-.07c-.21.83-.52,1.74-.8,2.4l-1.84,4.76h5.35l-1.84-4.76Z"/>
+    <path class="cls-2" d="M191.35,40.02h-6.44v-19.95h6.44c5.63,0,10.72,3.66,10.72,9.97s-5.07,9.97-10.72,9.97ZM190.85,23.36h-2.06v13.44h2.06c3.97,0,7.25-2.19,7.25-6.72s-3.28-6.72-7.25-6.72Z"/>
+    <path class="cls-2" d="M217.3,40.02l-1.91-4.82h-7.07l-1.91,4.82h-3.75l8.16-20.17h2.22l8.19,20.17h-3.94ZM212.61,27.83c-.25-.59-.53-1.41-.72-2.16h-.06c-.19.75-.47,1.56-.72,2.16l-1.66,4.28h4.82l-1.66-4.28Z"/>
+    <path class="cls-2" d="M104.39,58.16h-3.39v9h-4.18v-21.66h7.57c3.36,0,6.76,2.24,6.76,6.31s-3.36,6.35-6.76,6.35ZM103.71,49.06h-2.72v5.7h2.72c1.66,0,3.22-.88,3.22-2.85s-1.56-2.85-3.22-2.85Z"/>
+    <path class="cls-2" d="M125.64,67.63c-5.87,0-11.58-4.31-11.58-11.34s5.67-11.27,11.58-11.27,11.54,4.31,11.54,11.27-5.67,11.34-11.54,11.34ZM125.64,48.82c-3.63,0-7.23,2.85-7.23,7.54s3.6,7.57,7.23,7.57,7.23-2.85,7.23-7.57-3.67-7.54-7.23-7.54Z"/>
+    <path class="cls-2" d="M153.88,67.15l-6.31-9h-1.93v9h-4.18v-21.66h7.23c3.36,0,6.76,2.24,6.76,6.31,0,2.72-1.6,4.65-3.56,5.5l7.13,9.84h-5.13ZM148.01,49.06h-2.38v5.7h2.38c1.63,0,3.22-.88,3.22-2.85s-1.6-2.85-3.22-2.85Z"/>
+    <path class="cls-2" d="M169.45,49.06v18.09h-4.28v-18.09h-6.59v-3.56h17.45v3.56h-6.59Z"/>
+    <path class="cls-2" d="M179.11,67.15v-21.66h12.05v3.56h-7.81v5.43h6.48v3.6h-6.48v5.5h8.93v3.56h-13.17Z"/>
+    <path class="cls-2" d="M195.94,67.15v-21.66h4.28v18.09h8.86v3.56h-13.14Z"/>
+    <path class="cls-2" d="M227.34,67.15l-2.07-5.23h-7.67l-2.07,5.23h-4.07l8.86-21.89h2.41l8.89,21.89h-4.28ZM222.25,53.92c-.27-.64-.58-1.53-.78-2.34h-.07c-.2.81-.51,1.7-.78,2.34l-1.8,4.65h5.23l-1.8-4.65Z"/>
+    <path class="cls-1" d="M96.14,83.88v-10.67h1.37v10.67h-1.37Z"/>
+    <path class="cls-1" d="M112.92,83.88l-.43-5.17c-.07-.82-.15-1.76-.18-2.61h-.03c-.35.82-.87,1.89-1.25,2.66l-2.58,5.2h-.52l-2.59-5.2c-.38-.75-.87-1.77-1.25-2.63h-.03c-.03.85-.1,1.86-.17,2.58l-.42,5.17h-1.24l.89-10.67h.87l2.89,5.72c.44.87.97,1.97,1.35,2.88h.03c.37-.9.87-1.92,1.34-2.88l2.86-5.72h.87l.92,10.67h-1.32Z"/>
+    <path class="cls-1" d="M123.95,84.08c-2.89,0-5.62-2.16-5.62-5.55s2.73-5.52,5.62-5.52,5.62,2.16,5.62,5.52-2.73,5.55-5.62,5.55ZM123.95,74.23c-2.16,0-4.23,1.64-4.23,4.33s2.07,4.33,4.23,4.33,4.23-1.64,4.23-4.33-2.11-4.33-4.23-4.33Z"/>
+    <path class="cls-1" d="M137.35,83.88h-3.35v-10.67h2.81c1.46,0,2.93.95,2.93,2.73,0,.82-.42,1.64-1.09,1.92,1.1.27,2.12,1.4,2.12,2.81,0,2.11-1.74,3.21-3.43,3.21ZM136.59,74.34h-1.29v3.13h1.3c.95,0,1.76-.5,1.76-1.54s-.8-1.59-1.77-1.59ZM137.05,78.59h-1.74v4.15h1.77c1.22,0,2.32-.7,2.32-2.07s-1.12-2.07-2.36-2.07Z"/>
+    <path class="cls-1" d="M145.37,83.88v-10.67h1.37v10.67h-1.37Z"/>
+    <path class="cls-1" d="M151.78,83.88v-10.67h1.37v9.48h4.83v1.19h-6.21Z"/>
+    <path class="cls-1" d="M162,83.88v-10.67h1.37v10.67h-1.37Z"/>
+    <path class="cls-1" d="M170.37,80.33l-1.17,3.55h-1.51l3.85-11.27h1.74l3.85,11.27h-1.56l-1.2-3.55h-4ZM174.09,79.19l-1.12-3.24c-.25-.74-.42-1.4-.59-2.06h-.03c-.17.65-.33,1.35-.57,2.04l-1.1,3.26h3.41ZM174.87,70.04l-2.14,1.96h-1.19l1.56-1.96h1.77Z"/>
+    <path class="cls-1" d="M181.41,72.75c.74-.13,1.81-.23,2.79-.23,1.56,0,2.58.3,3.26.92.55.5.89,1.27.89,2.16,0,1.47-.94,2.46-2.11,2.86v.05c.85.3,1.37,1.1,1.64,2.27.37,1.57.64,2.66.87,3.09h-1.51c-.18-.33-.44-1.29-.74-2.69-.33-1.56-.95-2.14-2.27-2.19h-1.37v4.88h-1.46v-11.12ZM182.87,77.89h1.49c1.56,0,2.54-.85,2.54-2.14,0-1.45-1.05-2.09-2.59-2.09-.7,0-1.19.05-1.44.12v4.11Z"/>
+    <path class="cls-1" d="M194.49,72.6v11.27h-1.47v-11.27h1.47Z"/>
+    <path class="cls-1" d="M201.48,80.33l-1.17,3.55h-1.51l3.85-11.27h1.74l3.85,11.27h-1.56l-1.2-3.55h-4ZM205.19,79.19l-1.12-3.24c-.25-.74-.42-1.4-.59-2.06h-.03c-.17.65-.33,1.35-.57,2.04l-1.1,3.26h3.41Z"/>
+  </g>
+  <g>
+    <path class="cls-3" d="M82.43,45.88h-14.59s0,0,0,0h-3.17c-1.06,2.03-3.18,3.41-5.62,3.41-5.56,0-10.08,4.52-10.08,10.08,0,3.5-2.85,6.35-6.35,6.35s-6.32-2.83-6.34-6.31c0-5.5-4.43-10.02-9.89-10.13-3.43-.07-6.22-2.91-6.22-6.34h0c0-3.43,2.79-6.27,6.22-6.34,5.45-.11,9.89-4.63,9.89-10.13.02-3.48,2.87-6.31,6.34-6.31s6.35,2.85,6.35,6.35c0,5.56,4.52,10.08,10.08,10.08,2.44,0,4.56,1.39,5.62,3.41h3.17s0,0,0,0h14.59s2.95,0,2.95,0c-1.11-10.15-7.9-18.76-17.69-22.14C63.99,7.15,54.01,0,42.61,0s-21.51,7.38-25.12,18.03C7,21.87,0,31.78,0,42.94h0c0,11.16,7,21.08,17.49,24.91,3.61,10.65,13.83,18.03,25.12,18.03s21.38-7.15,25.07-17.87c9.79-3.37,16.58-11.99,17.69-22.14h-2.95ZM66.09,65.46l-.73.23-.23.73c-3.1,9.89-12.15,16.54-22.51,16.54s-19.54-6.86-22.55-16.67l-.22-.72-.71-.24c-9.69-3.24-16.2-12.23-16.2-22.38h0c0-10.15,6.51-19.14,16.2-22.38l.71-.24.22-.72c3.01-9.82,12.29-16.67,22.55-16.67s19.41,6.65,22.51,16.54l.23.73.73.23c7.97,2.5,13.8,8.86,15.78,16.65h-15.66c-1.7-2.08-4.28-3.41-7.17-3.41-3.94,0-7.15-3.21-7.15-7.15,0-5.11-4.16-9.28-9.28-9.28s-9.25,4.14-9.27,9.28c0,3.87-3.15,7.08-7.01,7.15-5.01.1-9.09,4.26-9.09,9.27h0c0,5.01,4.08,9.17,9.09,9.27,3.87.08,7.01,3.28,7.01,7.15.03,5.15,4.19,9.28,9.27,9.28s9.28-4.16,9.28-9.28c0-3.95,3.21-7.15,7.15-7.15,2.89,0,5.47-1.33,7.17-3.41h15.66c-1.98,7.79-7.82,14.15-15.78,16.65Z"/>
+    <path class="cls-3" d="M57.61,57.91s-.03.01-.03.03v1.43c0,8.43-7.01,15.26-15.51,14.95-8.11-.29-14.42-7.23-14.42-15.35v-1.01s-.01-.03-.03-.03l-1.41-.04c-8.09-.16-14.66-6.87-14.66-14.96h0c0-8.09,6.58-14.8,14.66-14.96l1.41-.04s.03-.01.03-.03v-1.01c0-8.12,6.3-15.06,14.42-15.35,8.5-.31,15.51,6.52,15.51,14.96v1.43s.01.03.03.03h1.04c5.01,0,9.58,2.4,12.4,6.17h3.54c-2.85-5.03-8.05-8.56-14.12-9.04-.01,0-.03-.01-.03-.03-.73-9.2-8.45-16.46-17.84-16.46s-17.12,7.28-17.84,16.5c0,.01-.01.03-.03.03-9.01.9-16.13,8.6-16.13,17.8h0c0,9.2,7.12,16.91,16.13,17.8.01,0,.03.01.03.03.72,9.22,8.45,16.5,17.84,16.5s17.1-7.26,17.84-16.46c0-.01.01-.03.03-.03,6.06-.48,11.27-4.01,14.12-9.04h-3.54c-2.82,3.76-7.39,6.17-12.4,6.17h-1.04Z"/>
+  </g>
+</svg><span class="div"></span><span class="sub">Contactos</span></div>
+      <div class="right">
+        <div class="count" id="count"></div>
+        <button class="update" id="refreshBtn" title="Atualizar agora">
+          <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg><span>Atualizar</span>
+        </button>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab on" data-tab="contactos">Contactos<span class="b" id="tc"></span></button>
+      <button class="tab" data-tab="staff">Staff<span class="b" id="ts"></span></button>
+      <button class="tab" data-tab="emails">Emails gerais<span class="b" id="te"></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" id="searchHost">
+  <div class="searchrow">
+    <div class="search">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" inputmode="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Procurar por nome, telefone ou email…">
+      <span class="kbd" id="kbd">/</span>
+      <button class="clearbtn" id="clear" aria-label="Limpar pesquisa">×</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section id="viewDir"><ul id="list"></ul></section>
+  <section id="viewEmails" style="display:none">
+    <div class="mailbar">
+      <div class="hint">Cada grupo tem no máximo <b>75 emails</b>. Copia um grupo e cola no campo <b>Bcc</b> para enviar sem bloquear caixas. Os grupos recalculam-se sozinhos.</div>
+      <div>Separador
+        <span class="seg" id="sep">
+          <button data-sep="; " class="on">ponto e vírgula</button>
+          <button data-sep=", ">vírgula</button>
+        </span>
+      </div>
+    </div>
+    <div class="groups" id="groups"></div>
+  </section>
+  <div class="status" id="status"></div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+/* ===== CONFIGURAÇÃO ======================================================
+   SHEET_CSV_URL        — folha principal (consultores), CSV publicado.
+   SHEET_STAFF_CSV_URL  — 2ª folha (Staff), CSV publicado. Tudo aqui = staff.
+   PHOTO_BASE/SHOW_PHOTOS — fotos por nome de ficheiro (coluna @image).
+   CHUNK — tamanho dos grupos de email.
+   ======================================================================== */
+const SHEET_CSV_URL       = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpqdV1tdG3XC29xjQ-4I2SYCiu3gSAhmiak9LHQHfrqz7t3clEr297LEpIvA8OokQsaP7X0Hn6oTi0/pub?gid=1657444257&single=true&output=csv";
+const SHEET_STAFF_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpqdV1tdG3XC29xjQ-4I2SYCiu3gSAhmiak9LHQHfrqz7t3clEr297LEpIvA8OokQsaP7X0Hn6oTi0/pub?gid=1665242959&single=true&output=csv";
+const PHOTO_BASE  = "fotos/";
+const SHOW_PHOTOS = false;
+const CHUNK       = 75;
+
+const norm=s=>(s||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const digits=s=>(s||"").toString().replace(/\D/g,"");
+function fmtPhone(v){
+  if(v==null)return"";
+  let s=v.toString().trim().replace(/\.0+$/,""); let d=s.replace(/\D/g,""); if(!d)return s;
+  let cc=""; if(d.length>9&&d.startsWith("351")){cc="+351 ";d=d.slice(3);}
+  if(d.length===9)return cc+d.replace(/(\d{3})(\d{3})(\d{3})/,"$1 $2 $3");
+  return (cc+d.replace(/(\d{3})(?=\d)/g,"$1 ")).trim();
+}
+function initials(n){const p=n.trim().split(/\s+/).filter(Boolean);return((p[0]?.[0]||"")+(p.length>1?p[p.length-1][0]:(p[0]?.[1]||""))).toUpperCase();}
+const esc=s=>(s||"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function isStaff(p){return norm(p.tipo||"").includes("staff");}
+function hasPhoto(img){return img && norm(img)!=="nada.png" && /\.(png|jpe?g|webp|gif)$/i.test(img);}
+
+function save(d){try{localStorage.setItem("cp_contactos",JSON.stringify(d));}catch(e){}}
+function loadSaved(){try{const r=localStorage.getItem("cp_contactos");return r?JSON.parse(r):null;}catch(e){return null;}}
+function normData(arr){return (arr||[]).map(p=>({n:p.n,t:fmtPhone(p.t),e:p.e,img:p.img||"",tipo:p.tipo||""}));}
+
+let DATA = normData(loadSaved()||[]);
+let live=false, loading=true, errored=false, tab="contactos", SEP="; ";
+
+const $=id=>document.getElementById(id);
+const $list=$("list"),$count=$("count"),$q=$("q"),$clear=$("clear"),$kbd=$("kbd"),$status=$("status"),
+$toast=$("toast"),$refresh=$("refreshBtn"),$viewDir=$("viewDir"),$viewEmails=$("viewEmails"),$groups=$("groups"),$searchHost=$("searchHost");
+
+async function clip(text){
+  if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return;}
+  const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();
+}
+async function copyBtn(text,btn,label){
+  try{await clip(text);
+    if(btn.querySelector(".tip"))btn.querySelector(".tip").textContent=label+" copiado";
+    btn.classList.add("done");clearTimeout(btn._t);btn._t=setTimeout(()=>btn.classList.remove("done"),1300);
+  }catch(e){alert("Não consegui copiar.");}
+}
+function hl(name,term){
+  if(!term)return esc(name);
+  const n=norm(name),t=norm(term),i=n.indexOf(t);
+  if(i<0)return esc(name);
+  return esc(name.slice(0,i))+"<mark>"+esc(name.slice(i,i+term.length))+"</mark>"+esc(name.slice(i+term.length));
+}
+const geralList=()=>DATA.filter(p=>!isStaff(p));
+const staffList=()=>DATA.filter(isStaff);
+function uniqEmails(list){const seen=new Set(),out=[];list.forEach(p=>{const e=(p.e||"").trim(),k=e.toLowerCase();if(e&&!seen.has(k)){seen.add(k);out.push(e);}});return out;}
+const chunk=(a,n)=>{const o=[];for(let i=0;i<a.length;i+=n)o.push(a.slice(i,i+n));return o;};
+
+function renderDir(){
+  const base = tab==="staff"?staffList():geralList();
+  const term=$q.value.trim(),nt=norm(term),dt=digits(term);
+  let items=base;
+  if(term)items=base.filter(p=>norm(p.n).includes(nt)||norm(p.e).includes(nt)||(dt.length>=2&&digits(p.t).includes(dt)));
+  $clear.style.display=term?"flex":"none"; $kbd.style.display=term?"none":"";
+  if(!items.length){
+    const msg=term?`Sem resultados para “${esc(term)}”`:(tab==="staff"?"Ainda não há ninguém no Staff":"Sem contactos");
+    const sub=(tab==="staff"&&!term)?"Assim que a folha Staff tiver gente, aparece aqui.":"Tenta outra forma de escrever o nome.";
+    $list.innerHTML=`<div class="empty"><div class="big">${msg}</div><div>${sub}</div>${term?'<button id="reset">Limpar pesquisa</button>':''}</div>`;
+    const rb=$("reset"); if(rb)rb.onclick=()=>{$q.value="";renderDir();$q.focus();}; return;
+  }
+  const frag=document.createDocumentFragment();
+  items.forEach((p,idx)=>{
+    const li=document.createElement("li");li.className="card";
+    if(idx<24)li.style.animationDelay=(Math.min(idx,16)*11)+"ms";else li.style.animation="none";
+    const ph=SHOW_PHOTOS&&hasPhoto(p.img);
+    const photo=ph?`<img src="${PHOTO_BASE}${encodeURI(p.img)}" alt="" loading="lazy" onerror="this.remove();this.parentNode.classList.remove('has-photo')">`:"";
+    const tel=p.t?`<div class="line">
+        <a class="tel" href="tel:${esc(p.t).replace(/\s/g,'')}">${esc(p.t)}</a>
+        <button class="cbtn" data-c="${esc(p.t)}" data-l="Telefone" aria-label="Copiar telefone"><span class="tip"></span><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.8.6a2 2 0 0 1 1.7 2.1z"/></svg></button>
+      </div>`:"";
+    li.innerHTML=`
+      <div class="head"><div class="avatar${ph?' has-photo':''}"><span class="ini">${initials(p.n)}</span>${photo}</div><div class="name">${hl(p.n,term)}</div></div>
+      ${tel}
+      <div class="line">
+        <a class="em" href="mailto:${esc(p.e)}" title="${esc(p.e)}">${esc(p.e)}</a>
+        <button class="cbtn" data-c="${esc(p.e)}" data-l="Email" aria-label="Copiar email"><span class="tip"></span><svg viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6 9 6 9-6"/></svg></button>
+      </div>`;
+    frag.appendChild(li);
+  });
+  $list.innerHTML="";$list.appendChild(frag);
+  $list.querySelectorAll(".cbtn").forEach(b=>b.addEventListener("click",()=>copyBtn(b.dataset.c,b,b.dataset.l)));
+}
+
+function renderEmails(){
+  const groups=chunk(uniqEmails(geralList()),CHUNK);
+  const sEmails=uniqEmails(staffList());
+  $groups.innerHTML="";
+  const make=(title,emails,staffGrp)=>{
+    const div=document.createElement("div");div.className="grp"+(staffGrp?" staff":"");
+    div.innerHTML=`
+      <div class="grp-top"><div class="grp-t">${title}</div><div class="grp-c"><b>${emails.length}</b> emails</div></div>
+      <div class="grp-row">
+        <button class="gbtn"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copiar emails</button>
+        <button class="peek">ver</button>
+      </div>
+      <div class="grp-list">${emails.map(esc).join(SEP)}</div>`;
+    const gb=div.querySelector(".gbtn"),pk=div.querySelector(".peek"),ls=div.querySelector(".grp-list");
+    gb.addEventListener("click",()=>{clip(emails.join(SEP)).then(()=>{gb.classList.add("done");gb.innerHTML="✓ Copiado";
+      clearTimeout(gb._t);gb._t=setTimeout(()=>{gb.classList.remove("done");gb.innerHTML=`<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copiar emails`;},1400);
+    }).catch(()=>alert("Não consegui copiar."));});
+    pk.addEventListener("click",()=>ls.classList.toggle("open"));
+    return div;
+  };
+  if(!groups.length&&!sEmails.length){$groups.innerHTML=`<div class="empty"><div class="big">Sem emails</div></div>`;return;}
+  groups.forEach((g,i)=>$groups.appendChild(make(`Grupo ${i+1}`,g,false)));
+  if(sEmails.length)$groups.appendChild(make("Staff",sEmails,true));
+}
+
+function counts(){
+  const g=geralList().length,s=staffList().length;
+  const gE=uniqEmails(geralList()).length,sE=uniqEmails(staffList()).length;
+  $("tc").textContent=g; $("ts").textContent=s; $("te").textContent=Math.ceil(gE/CHUNK)+(sE?1:0);
+  if(tab==="contactos")$count.innerHTML=`<b>${g}</b> contactos`;
+  else if(tab==="staff")$count.innerHTML=`<b>${s}</b> staff`;
+  else $count.innerHTML=`<b>${gE+sE}</b> emails · grupos de ${CHUNK}`;
+}
+
+function renderActive(){
+  const onE = tab==="emails";
+  $viewDir.style.display=onE?"none":""; $viewEmails.style.display=onE?"":"none"; $searchHost.style.display=onE?"none":"";
+  if(!DATA.length){
+    const host = onE?$groups:$list;
+    if(loading) host.innerHTML=`<div class="empty"><div class="spinner"></div><div class="big">A carregar…</div><div>A ir buscar os contactos à folha do Google.</div></div>`;
+    else host.innerHTML=`<div class="empty"><div class="big">Não foi possível carregar</div><div>Verifica a ligação e se a folha está publicada.</div><button id="retry">Tentar de novo</button></div>`;
+    const rb=$("retry"); if(rb)rb.onclick=()=>syncSheet(true);
+    counts(); return;
+  }
+  if(onE)renderEmails();
+  else{$q.placeholder=tab==="staff"?"Procurar staff…":"Procurar por nome, telefone ou email…"; renderDir();}
+  counts();
+}
+
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+  t.classList.add("on"); tab=t.dataset.tab; $q.value=""; window.scrollTo({top:0}); renderActive();
+}));
+document.querySelectorAll("#sep button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#sep button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); SEP=b.dataset.sep; if(tab==="emails")renderEmails();
+}));
+
+function setStatus(){
+  let label;
+  if(live) label=`<span class="dot"></span>Sincronizado com a folha do Google · atualiza sozinho`;
+  else if(loading) label=`<span class="dot local"></span>A carregar da folha do Google…`;
+  else if(DATA.length) label=`<span class="dot local"></span>A mostrar última cópia · sem ligação à folha`;
+  else label=`<span class="dot local"></span>Sem ligação à folha`;
+  $status.innerHTML=label;
+}
+function toast(msg,err){$toast.textContent=msg;$toast.className=err?"show err":"show";clearTimeout($toast._t);$toast._t=setTimeout(()=>$toast.className=err?"err":"",2200);}
+
+const isUrl=u=>u&&/^https?:/.test(u);
+function mapRows(rows){
+  if(!rows||!rows.length)return null;
+  const head=rows[0].map(h=>norm(h).trim());
+  const iN=head.indexOf("nome"),iT=head.indexOf("contacto"),iE=head.indexOf("email");
+  let iI=head.indexOf("@image");if(iI<0)iI=head.indexOf("image");if(iI<0)iI=head.indexOf("imagem");if(iI<0)iI=head.indexOf("foto");
+  let iG=head.indexOf("tipo");if(iG<0)iG=head.indexOf("grupo");if(iG<0)iG=head.indexOf("staff");if(iG<0)iG=head.indexOf("categoria");
+  if(iN<0||iT<0||iE<0)return null;
+  return rows.slice(1).map(r=>({
+    n:(r[iN]??"").toString().trim(), t:fmtPhone(r[iT]), e:(r[iE]??"").toString().trim(),
+    img:iI>=0?(r[iI]??"").toString().trim():"", tipo:iG>=0?(r[iG]??"").toString().trim():""
+  })).filter(x=>x.n);
+}
+function parseCSV(text){
+  const rows=[];let row=[],field="",q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){field+='"';i++;}else q=false;}else field+=c;}
+    else{if(c==='"')q=true;else if(c===','){row.push(field);field="";}
+      else if(c==='\n'){row.push(field);rows.push(row);row=[];field="";}else if(c==='\r'){}else field+=c;}}
+  if(field.length||row.length){row.push(field);rows.push(row);}
+  return rows.filter(r=>r.some(c=>c&&c.trim()));
+}
+function fetchRows(u){return fetch(u,{cache:"no-store"}).then(r=>{if(!r.ok)throw 0;return r.text();}).then(t=>mapRows(parseCSV(t)));}
+
+function syncSheet(manual){
+  if(!isUrl(SHEET_CSV_URL)){loading=false;renderActive();setStatus();return;}
+  loading=true; $refresh.classList.add("busy"); setStatus(); if(!DATA.length)renderActive();
+  const mainP=fetchRows(SHEET_CSV_URL);
+  const staffP=isUrl(SHEET_STAFF_CSV_URL)?fetchRows(SHEET_STAFF_CSV_URL):Promise.resolve(null);
+  Promise.allSettled([mainP,staffP]).then(([m,s])=>{
+    loading=false; $refresh.classList.remove("busy");
+    if(m.status!=="fulfilled"){ if(!DATA.length)errored=true; setStatus(); renderActive(); if(manual)toast("Sem ligação à folha",true); return; }
+    const main=m.value;
+    if(main===null){ setStatus(); renderActive(); toast("Folha: faltam colunas nome / contacto / email",true); return; }
+    let merged=main.slice();
+    if(s.status==="fulfilled"&&s.value&&s.value.length) merged=merged.concat(s.value.map(p=>({...p,tipo:"staff"})));
+    DATA=normData(merged); live=true; errored=false; save(DATA); renderActive(); setStatus();
+    if(manual)toast("Atualizado");
+  });
+}
+$refresh.addEventListener("click",()=>syncSheet(true));
+
+let raf;$q.addEventListener("input",()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{renderDir();counts();});});
+$clear.addEventListener("click",()=>{$q.value="";renderDir();counts();$q.focus();});
+document.addEventListener("keydown",e=>{
+  if(e.key==="/"&&document.activeElement!==$q&&tab!=="emails"){e.preventDefault();$q.focus();}
+  if(e.key==="Escape"&&document.activeElement===$q){$q.value="";renderDir();counts();$q.blur();}
+});
+
+renderActive(); setStatus(); syncSheet();
+</script>
+</body>
+</html>

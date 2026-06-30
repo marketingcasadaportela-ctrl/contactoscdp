@@ -1,0 +1,4 @@
+# Protege todo o site com a cancela de password (edge function "auth").
+[[edge_functions]]
+  path = "/*"
+  function = "auth"
