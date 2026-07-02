@@ -25,10 +25,10 @@
     backdrop-filter:saturate(1.1) blur(12px); -webkit-backdrop-filter:saturate(1.1) blur(12px);
     border-bottom:1px solid var(--line)}
   .wrap{max-width:1680px; margin:0 auto; padding:0 32px}
-  .topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:15px 0 6px}
-  .brand{display:flex; align-items:center; gap:13px; min-width:0}
-  .logo-svg{height:30px; width:auto; display:block}
-  .brand .div{width:1px; height:26px; background:var(--line)}
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 0 8px}
+  .brand{display:flex; align-items:center; gap:16px; min-width:0}
+  .logo-svg{height:42px; width:auto; display:block}
+  .brand .div{width:1px; height:32px; background:var(--line)}
   .brand .sub{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:14px; color:var(--muted); white-space:nowrap}
   .right{display:flex; align-items:center; gap:14px}
   .count{font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
@@ -41,7 +41,7 @@
   .update.busy svg{animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  .tabs{display:flex; gap:4px; padding:2px 0 0}
+  .tabs{display:flex; gap:4px; padding:6px 0 0}
   .tab{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:15px; color:var(--muted);
     background:none; border:none; cursor:pointer; padding:9px 14px 12px; position:relative; border-radius:8px 8px 0 0}
   .tab:hover{color:var(--ink); background:var(--line-2)}
@@ -55,6 +55,8 @@
   #q{width:100%; font-family:inherit; font-size:16px; color:var(--ink); background:var(--surface);
     border:1px solid var(--line); border-radius:13px; padding:13px 44px; outline:none; transition:border-color .15s, box-shadow .15s}
   #q::placeholder{color:var(--faint)}
+  #q::-webkit-search-cancel-button,#q::-webkit-search-decoration{-webkit-appearance:none;appearance:none}
+  #q::-ms-clear{display:none;width:0;height:0}
   #q:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
   .clearbtn{position:absolute; right:10px; border:none; background:transparent; cursor:pointer; color:var(--faint);
     width:28px; height:28px; border-radius:8px; display:none; align-items:center; justify-content:center; font-size:18px}
