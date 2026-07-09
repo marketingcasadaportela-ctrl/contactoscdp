@@ -41,8 +41,9 @@
   .update.busy svg{animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  .tabs{display:flex; gap:4px; padding:6px 0 0}
-  .tab{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:15px; color:var(--muted);
+  .tabs{display:flex; gap:4px; padding:6px 0 0; overflow-x:auto; scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto; font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:15px; color:var(--muted);
     background:none; border:none; cursor:pointer; padding:9px 14px 12px; position:relative; border-radius:8px 8px 0 0}
   .tab:hover{color:var(--ink); background:var(--line-2)}
   .tab.on{color:var(--accent)}
@@ -204,6 +205,7 @@
       <button class="tab on" data-tab="contactos">Contactos<span class="b" id="tc"></span></button>
       <button class="tab" data-tab="staff">Staff<span class="b" id="ts"></span></button>
       <button class="tab" data-tab="emails">Emails gerais<span class="b" id="te"></span></button>
+      <button class="tab" data-tab="emailsul">Emails Sul<span class="b" id="tsul"></span></button>
     </div>
   </div>
 </header>
@@ -263,11 +265,12 @@ function fmtPhone(v){
 function initials(n){const p=n.trim().split(/\s+/).filter(Boolean);return((p[0]?.[0]||"")+(p.length>1?p[p.length-1][0]:(p[0]?.[1]||""))).toUpperCase();}
 const esc=s=>(s||"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function isStaff(p){return norm(p.tipo||"").includes("staff");}
+function isSul(p){return norm(p.local||"").includes("sul");}
 function hasPhoto(img){return img && norm(img)!=="nada.png" && /\.(png|jpe?g|webp|gif)$/i.test(img);}
 
 function save(d){try{localStorage.setItem("cp_contactos",JSON.stringify(d));}catch(e){}}
 function loadSaved(){try{const r=localStorage.getItem("cp_contactos");return r?JSON.parse(r):null;}catch(e){return null;}}
-function normData(arr){return (arr||[]).map(p=>({n:p.n,t:fmtPhone(p.t),e:p.e,img:p.img||"",tipo:p.tipo||""}));}
+function normData(arr){return (arr||[]).map(p=>({n:p.n,t:fmtPhone(p.t),e:p.e,img:p.img||"",tipo:p.tipo||"",local:p.local||""}));}
 
 let DATA = normData(loadSaved()||[]);
 let live=false, loading=true, errored=false, tab="contactos", SEP="; ";
@@ -335,9 +338,10 @@ function renderDir(){
   $list.querySelectorAll(".cbtn").forEach(b=>b.addEventListener("click",()=>copyBtn(b.dataset.c,b,b.dataset.l)));
 }
 
-function renderEmails(){
-  const groups=chunk(uniqEmails(geralList()),CHUNK);
-  const sEmails=uniqEmails(staffList());
+function renderEmails(scope){
+  const source = scope==="sul" ? geralList().filter(isSul) : geralList();
+  const groups=chunk(uniqEmails(source),CHUNK);
+  const sEmails = scope==="sul" ? [] : uniqEmails(staffList());
   $groups.innerHTML="";
   const make=(title,emails,staffGrp)=>{
     const div=document.createElement("div");div.className="grp"+(staffGrp?" staff":"");
@@ -355,22 +359,26 @@ function renderEmails(){
     pk.addEventListener("click",()=>ls.classList.toggle("open"));
     return div;
   };
-  if(!groups.length&&!sEmails.length){$groups.innerHTML=`<div class="empty"><div class="big">Sem emails</div></div>`;return;}
-  groups.forEach((g,i)=>$groups.appendChild(make(`Grupo ${i+1}`,g,false)));
+  if(!groups.length&&!sEmails.length){$groups.innerHTML=`<div class="empty"><div class="big">${scope==="sul"?"Sem consultores do Sul":"Sem emails"}</div>${scope==="sul"?'<div>Marca <b>Sul</b> na coluna <b>local</b> da folha.</div>':''}</div>`;return;}
   if(sEmails.length)$groups.appendChild(make("Staff",sEmails,true));
+  groups.forEach((g,i)=>$groups.appendChild(make(`Grupo ${i+1}`,g,false)));
 }
 
 function counts(){
   const g=geralList().length,s=staffList().length;
   const gE=uniqEmails(geralList()).length,sE=uniqEmails(staffList()).length;
-  $("tc").textContent=g; $("ts").textContent=s; $("te").textContent=Math.ceil(gE/CHUNK)+(sE?1:0);
+  const sulE=uniqEmails(geralList().filter(isSul)).length;
+  $("tc").textContent=g; $("ts").textContent=s;
+  $("te").textContent=Math.ceil(gE/CHUNK)+(sE?1:0);
+  $("tsul").textContent=Math.ceil(sulE/CHUNK);
   if(tab==="contactos")$count.innerHTML=`<b>${g}</b> contactos`;
   else if(tab==="staff")$count.innerHTML=`<b>${s}</b> staff`;
+  else if(tab==="emailsul")$count.innerHTML=`<b>${sulE}</b> emails · Sul · grupos de ${CHUNK}`;
   else $count.innerHTML=`<b>${gE+sE}</b> emails · grupos de ${CHUNK}`;
 }
 
 function renderActive(){
-  const onE = tab==="emails";
+  const onE = tab==="emails"||tab==="emailsul";
   $viewDir.style.display=onE?"none":""; $viewEmails.style.display=onE?"":"none"; $searchHost.style.display=onE?"none":"";
   if(!DATA.length){
     const host = onE?$groups:$list;
@@ -379,7 +387,8 @@ function renderActive(){
     const rb=$("retry"); if(rb)rb.onclick=()=>syncSheet(true);
     counts(); return;
   }
-  if(onE)renderEmails();
+  if(tab==="emails")renderEmails("geral");
+  else if(tab==="emailsul")renderEmails("sul");
   else{$q.placeholder=tab==="staff"?"Procurar staff…":"Procurar por nome, telefone ou email…"; renderDir();}
   counts();
 }
@@ -410,10 +419,11 @@ function mapRows(rows){
   const iN=head.indexOf("nome"),iT=head.indexOf("contacto"),iE=head.indexOf("email");
   let iI=head.indexOf("@image");if(iI<0)iI=head.indexOf("image");if(iI<0)iI=head.indexOf("imagem");if(iI<0)iI=head.indexOf("foto");
   let iG=head.indexOf("tipo");if(iG<0)iG=head.indexOf("grupo");if(iG<0)iG=head.indexOf("staff");if(iG<0)iG=head.indexOf("categoria");
+  let iL=head.indexOf("local");if(iL<0)iL=head.indexOf("zona");if(iL<0)iL=head.indexOf("regiao");
   if(iN<0||iT<0||iE<0)return null;
   return rows.slice(1).map(r=>({
     n:(r[iN]??"").toString().trim(), t:fmtPhone(r[iT]), e:(r[iE]??"").toString().trim(),
-    img:iI>=0?(r[iI]??"").toString().trim():"", tipo:iG>=0?(r[iG]??"").toString().trim():""
+    img:iI>=0?(r[iI]??"").toString().trim():"", tipo:iG>=0?(r[iG]??"").toString().trim():"", local:iL>=0?(r[iL]??"").toString().trim():""
   })).filter(x=>x.n);
 }
 function parseCSV(text){
@@ -448,7 +458,7 @@ $refresh.addEventListener("click",()=>syncSheet(true));
 let raf;$q.addEventListener("input",()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{renderDir();counts();});});
 $clear.addEventListener("click",()=>{$q.value="";renderDir();counts();$q.focus();});
 document.addEventListener("keydown",e=>{
-  if(e.key==="/"&&document.activeElement!==$q&&tab!=="emails"){e.preventDefault();$q.focus();}
+  if(e.key==="/"&&document.activeElement!==$q&&tab!=="emails"&&tab!=="emailsul"){e.preventDefault();$q.focus();}
   if(e.key==="Escape"&&document.activeElement===$q){$q.value="";renderDir();counts();$q.blur();}
 });
 
